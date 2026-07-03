@@ -2,7 +2,7 @@
 FROM node:26-slim
 
 # 清除旧版源配置，并写入清华源 (DEB822 格式)
-RUN echo "" > /etc/apt/sources.list && \
+RUN rm -f /etc/apt/sources.list && \
     cat <<'EOF' > /etc/apt/sources.list.d/debian.sources
 Types: deb
 URIs: http://mirrors.tuna.tsinghua.edu.cn/debian
@@ -23,14 +23,21 @@ RUN apt-get update && apt-get install -y curl git vim iproute2 && \
     rm -rf /var/lib/apt/lists/* && \
     npm config set registry http://registry.npmmirror.com
 
-# 通过 npm 全局安装 Claude Code CLI
-RUN npm install -g @anthropic-ai/claude-code@latest
+# 通过 npm 全局安装所有的 CLI 工具 (合并为一层以优化镜像大小)
+RUN npm install -g \
+    @anthropic-ai/claude-code@latest \
+    openclaw@latest \
+    @mimo-ai/cli
 
-# 通过 npm 全局安装 Open Claw CLI
-RUN npm install -g openclaw@latest
-
-# 通过 npm 全局安装 Xiaomi MiMo Code
-RUN npm install -g @mimo-ai/cli
+# 加入 DeepSeek 的官方 API 模型环境变量 (使用全局 ENV 确保所有进程均可读取)
+ENV ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic" \
+    ANTHROPIC_AUTH_TOKEN="sk-df42f1bffea848cd8c7535299e4e5dcb" \
+    ANTHROPIC_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_OPUS_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_SONNET_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_HAIKU_MODEL="deepseek-v4-flash" \
+    CLAUDE_CODE_SUBAGENT_MODEL="deepseek-v4-flash" \
+    CLAUDE_CODE_EFFORT_LEVEL="max"
 
 # 设置工作目录
 WORKDIR /project

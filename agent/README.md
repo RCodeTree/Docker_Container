@@ -47,7 +47,7 @@ docker run -itd --name container-name -v $(pwd):your-workdir --network bridge cl
 # 隐性指定网络模式为 bridge 模式
 docker run -itd --name container-name -v $(pwd):your-workdir claude-cli-env
 
-# 显性指定网络模式为 bridge 模式，并直接接入Claude CLI，从现有安装中迁移到 DeepSeek
+# 显性指定网络模式为 bridge 模式，并直接接入Claude CLI，从现有安装中迁移到 DeepSeek(临时变量)
 docker run -itd --name container-name \
 -v $(pwd):your-workdir \
 --network bridge \
@@ -60,6 +60,18 @@ docker run -itd --name container-name \
 -e CLAUDE_CODE_SUBAGENT_MODEL=deepseek-v4-flash \
 -e CLAUDE_CODE_EFFORT_LEVEL=max \
 claude-cli-env;
+
+# 永久配置，指定使用模型和提供商(在 image 构建阶段，即docker build -t tagname .)
+# 下方配置写在 Dockerfile 中
+ENV ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic" \
+    ANTHROPIC_AUTH_TOKEN="<your DeepSeek API Key>" \
+    ANTHROPIC_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_OPUS_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_SONNET_MODEL="deepseek-v4-pro[1m]" \
+    ANTHROPIC_DEFAULT_HAIKU_MODEL="deepseek-v4-flash" \
+    CLAUDE_CODE_SUBAGENT_MODEL="deepseek-v4-flash" \
+    CLAUDE_CODE_EFFORT_LEVEL="max"
+
 ```
 1. `Claude-CLI`
     - 国内不能直接访问Claude
