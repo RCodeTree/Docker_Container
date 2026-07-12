@@ -29,9 +29,9 @@ RUN npm install -g \
     openclaw@latest \
     @mimo-ai/cli
 
-# 加入 DeepSeek 的官方 API 模型环境变量 (使用全局 ENV 确保所有进程均可读取)
+# 加入 DeepSeek 的官方 API 模型环境变量 (使用全局 ENV 确保所有进程均可读取) --- 在镜像构建时设置，如果不使用下面的ENV设置，则在容器运行时要根据官方文档进行手动设置设置
 ENV ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic" \
-    ANTHROPIC_AUTH_TOKEN="sk-df42f1bffea848cd8c7535299e4e5dcb" \
+    ANTHROPIC_AUTH_TOKEN="sk-79431e0ca70045218c86308264c93c26" \
     ANTHROPIC_MODEL="deepseek-v4-pro[1m]" \
     ANTHROPIC_DEFAULT_OPUS_MODEL="deepseek-v4-pro[1m]" \
     ANTHROPIC_DEFAULT_SONNET_MODEL="deepseek-v4-pro[1m]" \
